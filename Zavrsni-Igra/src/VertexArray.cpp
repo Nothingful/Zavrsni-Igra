@@ -28,6 +28,14 @@ void VertexArray::AddBuffer(const VertexBuffer& vb, const VertexBufferLayout& la
 	}
 }
 
+void VertexArray::AddBuffer(const VertexBuffer& vb, int count)
+{
+	Bind();
+	vb.Bind();
+	GLCall(glEnableVertexAttribArray(0));
+	GLCall(glVertexAttribPointer(0, count, GL_FLOAT, GL_FALSE, count * sizeof(float), (void*)0));
+}
+
 void VertexArray::Bind() const
 {
 	GLCall(glBindVertexArray(m_RendererID));

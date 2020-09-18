@@ -39,7 +39,7 @@ private:
     /* Render state */
     Shader m_Shader;
     Texture m_Texture;
-    unsigned int m_VAO;
+    VertexArray* m_VAO;
 	
     /* Initialize buffer and vertex attributes */
     void init();

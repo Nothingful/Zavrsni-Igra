@@ -1,6 +1,5 @@
 #include "SpriteRenderer.h"
 
-
 SpriteRenderer::SpriteRenderer(Shader& shader)
 {
     m_shader = shader;
@@ -9,13 +8,14 @@ SpriteRenderer::SpriteRenderer(Shader& shader)
 
 SpriteRenderer::~SpriteRenderer()
 {
-    GLCall(glDeleteVertexArrays(1, &m_QuadVAO));
+    //GLCall(glDeleteVertexArrays(1, &m_QuadVAO));
 }
 
 void SpriteRenderer::DrawSprite(Texture& texture, glm::vec2 position, glm::vec2 size, float rotate, glm::vec3 color)
 {
     /* Prepare transformations */
     m_shader.Use();
+	
     glm::mat4 model = glm::mat4(1.0f);
 
     /* First translate (transformations are: scale happens first, then rotation, and then final translation happens; reversed order) */
@@ -34,18 +34,21 @@ void SpriteRenderer::DrawSprite(Texture& texture, glm::vec2 position, glm::vec2 
     /* Render textured quad */
     m_shader.SetUniform3f("u_SpriteColor", color);
 
-    GLCall(glActiveTexture(GL_TEXTURE0));
+    //GLCall(glActiveTexture(GL_TEXTURE0)); // Setting texture slot 0
     texture.Bind();
 
-    GLCall(glBindVertexArray(m_QuadVAO));
-    GLCall(glDrawArrays(GL_TRIANGLES, 0, 6));
-    GLCall(glBindVertexArray(0));
+    m_QuadVAO->Bind();
+
+	GLCall(glDrawArrays(GL_TRIANGLES, 0, 6));
+
+    m_QuadVAO->Unbind();
 }
 
 void SpriteRenderer::initRenderData()
 {
     /* Configure VAO/VBO */
-    unsigned int VBO;
+    m_QuadVAO = new VertexArray();
+
     float vertices[] = {
         // pos      // tex
         0.0f, 1.0f, 0.0f, 1.0f,
@@ -56,19 +59,8 @@ void SpriteRenderer::initRenderData()
         1.0f, 1.0f, 1.0f, 1.0f,
         1.0f, 0.0f, 1.0f, 0.0f
     };
+    VertexBuffer* VBO;
+	VBO = new VertexBuffer(vertices, sizeof(vertices));
 
-    GLCall(glGenVertexArrays(1, &m_QuadVAO));
-    GLCall(glGenBuffers(1, &VBO));
-
-    GLCall(glBindBuffer(GL_ARRAY_BUFFER, VBO));
-    GLCall(glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW));
-
-    GLCall(glBindVertexArray(m_QuadVAO));
-    GLCall(glEnableVertexAttribArray(0));
-    GLCall(glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0));
-    //GLCall(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0));
-    //GLCall(glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)(2*sizeof(float))));
-    GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
-    GLCall(glBindVertexArray(0));
-    //GLCall(glBindVertexArray(1));
+    m_QuadVAO->AddBuffer(*VBO, 4);
 }

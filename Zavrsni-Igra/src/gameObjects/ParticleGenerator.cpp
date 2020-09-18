@@ -41,9 +41,10 @@ void ParticleGenerator::Draw()
             m_Shader.SetUniform2f("u_Offset", particle.Position);
             m_Shader.SetUniform4f("u_Color", particle.Color);
             m_Texture.Bind();
-            GLCall(glBindVertexArray(m_VAO));
+        	
+            m_VAO->Bind();
             GLCall(glDrawArrays(GL_TRIANGLES, 0, 6));
-            GLCall(glBindVertexArray(0));
+            m_VAO->Unbind();
         }
     }
     /* Reset to default blending mode */
@@ -52,8 +53,9 @@ void ParticleGenerator::Draw()
 
 void ParticleGenerator::init()
 {
+    m_VAO = new VertexArray();
+	
     /* Set up mesh and attribute properties */
-    unsigned int VBO;
     float particleQuad[] = {
         0.0f, 1.0f, 0.0f, 1.0f,
         1.0f, 0.0f, 1.0f, 0.0f,
@@ -63,18 +65,11 @@ void ParticleGenerator::init()
         1.0f, 1.0f, 1.0f, 1.0f,
         1.0f, 0.0f, 1.0f, 0.0f
     };
-    GLCall(glGenVertexArrays(1, &m_VAO));
-    GLCall(glGenBuffers(1, &VBO));
-    GLCall(glBindVertexArray(m_VAO));
-	
-    /* Fill mesh buffer */
-    GLCall(glBindBuffer(GL_ARRAY_BUFFER, VBO));
-    GLCall(glBufferData(GL_ARRAY_BUFFER, sizeof(particleQuad), particleQuad, GL_STATIC_DRAW));
-	
-    /* set mesh attributes */
-    GLCall(glEnableVertexAttribArray(0));
-    GLCall(glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0));
-    GLCall(glBindVertexArray(0));
+    VertexBuffer* VBO = new VertexBuffer(particleQuad, sizeof(particleQuad));
+
+    m_VAO->AddBuffer(*VBO, 4);
+
+    m_VAO->Unbind();
 
     /* Create "amount" of default particle instances */
     for (unsigned int i = 0; i < m_Amount; ++i)
