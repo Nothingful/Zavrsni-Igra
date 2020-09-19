@@ -39,7 +39,7 @@ void Game::Init()
     ResourceManager::LoadShader("res/shaders/VertexShaderParticle.glsl", "res/shaders/FragmentShaderParticle.glsl", "particle");
 	
     /* Configure shaders */
-    glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(Width), static_cast<float>(Height), 0.0f, -1.0f, 1.0f);
+    glm::mat4 projection = glm::ortho(0.0f, (float)Width, (float)Height, 0.0f, -1.0f, 1.0f);
     ResourceManager::GetShader("sprite").Bind();
     ResourceManager::GetShader("sprite").SetUniform1i("u_Image", 0);
     ResourceManager::GetShader("sprite").SetUniformMat4f("u_Projection", projection);
