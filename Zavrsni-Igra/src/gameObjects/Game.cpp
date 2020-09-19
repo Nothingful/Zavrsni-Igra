@@ -22,7 +22,6 @@ const float BALL_RADIUS = 12.5f;
 
 Game::Game(unsigned int width, unsigned int height) : State(GAME_ACTIVE), Keys(), Width(width), Height(height)
 {
-
 }
 
 Game::~Game()
@@ -353,4 +352,20 @@ Direction Game::VectorDirection(glm::vec2 target)
         }
     }
     return (Direction)bestMatch;
+}
+
+void GLClearError()
+{
+    while (glGetError() != GL_NO_ERROR);
+}
+
+bool GLLogCall(const char* function, const char* file, int line)
+{
+    while (GLenum error = glGetError())
+    {
+        std::cout << "[OpenGL Error] (" << error << "): " << function <<
+            " " << file << ":" << line << std::endl;
+        return false;
+    }
+    return true;
 }
