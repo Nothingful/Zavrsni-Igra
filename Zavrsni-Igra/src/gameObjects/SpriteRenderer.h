@@ -11,7 +11,7 @@ class SpriteRenderer
 {
 private:
 	/* Render state */
-    Shader m_shader;
+    Shader m_Shader;
     VertexArray* m_QuadVAO;
     /* Initializes and configures the quad's buffer and vertex attributes */
     void initRenderData();

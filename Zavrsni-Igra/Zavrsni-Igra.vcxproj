@@ -331,7 +331,7 @@
     <ClCompile Include="src\gameObjects\ParticleGenerator.cpp" />
     <ClCompile Include="src\gameObjects\SpriteRenderer.cpp" />
     <ClCompile Include="src\IndexBuffer.cpp" />
-    <ClCompile Include="src\Pong.cpp" />
+    <ClCompile Include="src\BrickBreaker.cpp" />
     <ClCompile Include="src\ResourceManager.cpp" />
     <ClCompile Include="src\Shader.cpp" />
     <ClCompile Include="src\Texture.cpp" />

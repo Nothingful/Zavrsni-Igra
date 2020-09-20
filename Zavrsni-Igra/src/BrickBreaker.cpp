@@ -1,6 +1,9 @@
 #include <gl/glew.h>
 #include <GLFW/glfw3.h>
 
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_glfw_gl3.h"
+
 #include "gameObjects/Game.h"
 #include "ResourceManager.h"
 
@@ -8,6 +11,8 @@
 
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
+
+
 
 /* GLFW function declerations */
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -17,7 +22,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 const unsigned int SCREEN_WIDTH = 1280;
 const unsigned int SCREEN_HEIGHT = 720;
 
-Game Pong(SCREEN_WIDTH, SCREEN_HEIGHT);
+Game BrickBreaker(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 int main(int argc, char* argv[])
 {
@@ -63,8 +68,15 @@ int main(int argc, char* argv[])
     GLCall(glEnable(GL_BLEND));
     GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
+    /* Creating ImGui context */
+    //IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    //ImGuiIO& io = ImGui::GetIO(); (void)io;
+    ImGui_ImplGlfwGL3_Init(window, false);
+    ImGui::StyleColorsDark();
+
     /* Initialize game */
-    Pong.Init();
+    BrickBreaker.Init();
 
     /* deltaTime variables */
     float deltaTime = 0.0f;
@@ -79,16 +91,30 @@ int main(int argc, char* argv[])
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
+        // Start new ImGui frame
+        ImGui_ImplGlfwGL3_NewFrame();
+    	
         /* User input */
-        Pong.ProcessInput(deltaTime);
+        BrickBreaker.ProcessInput(deltaTime);
 
         /* Update game state */
-        Pong.Update(deltaTime);
+        BrickBreaker.Update(deltaTime);
 
         /* Render here */
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
-        Pong.Render();
+        BrickBreaker.Render();
+
+        {
+            ImGui::Begin("Brick Breaker");
+            ImGui::Text("Level: %d \n", BrickBreaker.Level + 1);
+            ImGui::Text("Resolution: %d x %d", (int)ImGui::GetIO().DisplaySize.x, (int)ImGui::GetIO().DisplaySize.y);
+            ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+            ImGui::End();
+        }
+    	
+        ImGui::Render();
+        ImGui_ImplGlfwGL3_RenderDrawData(ImGui::GetDrawData());
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
@@ -99,6 +125,8 @@ int main(int argc, char* argv[])
 	
     /* Delete all resources as loaded using the resource manager */
     ResourceManager::Clear();
+    ImGui_ImplGlfwGL3_Shutdown();
+    ImGui::DestroyContext();
 
     glfwTerminate();
     return 0;
@@ -113,8 +141,8 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	}
     if (key >= 0 && key < 1024)
     {
-        if (action == GLFW_PRESS) Pong.Keys[key] = true;
-        else if (action == GLFW_RELEASE) Pong.Keys[key] = false;
+        if (action == GLFW_PRESS) BrickBreaker.Keys[key] = true;
+        else if (action == GLFW_RELEASE) BrickBreaker.Keys[key] = false;
     }
 }
 

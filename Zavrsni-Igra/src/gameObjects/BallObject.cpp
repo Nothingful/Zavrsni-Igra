@@ -6,13 +6,13 @@ BallObject::BallObject()
 BallObject::BallObject(glm::vec2 position, float radius, glm::vec2 velocity, Texture sprite)
     : GameObject(position, glm::vec2(radius * 2.0f, radius * 2.0f), sprite, glm::vec3(1.0f), velocity), Radius(radius), Stuck(true) { }
 
-glm::vec2 BallObject::Move(float dt, unsigned int windowWidth)
+glm::vec2 BallObject::Move(float deltaTime, unsigned int windowWidth)
 {
     /* If not stuck to player board */
     if (!Stuck)
     {
         /* Move the ball */
-        Position += Velocity * dt;
+        Position += Velocity * deltaTime;
         /* then check if outside window bounds and if so, reverse velocity and restore at correct position */
         if (Position.x <= 0.0f)
         {

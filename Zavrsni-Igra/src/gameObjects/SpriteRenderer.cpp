@@ -2,7 +2,7 @@
 
 SpriteRenderer::SpriteRenderer(Shader& shader)
 {
-    m_shader = shader;
+    m_Shader = shader;
     initRenderData();
 }
 
@@ -14,7 +14,7 @@ SpriteRenderer::~SpriteRenderer()
 void SpriteRenderer::DrawSprite(Texture& texture, glm::vec2 position, glm::vec2 size, float rotate, glm::vec3 color)
 {
     /* Prepare transformations */
-    m_shader.Bind();
+    m_Shader.Bind();
 	
     glm::mat4 model = glm::mat4(1.0f);
 
@@ -29,10 +29,10 @@ void SpriteRenderer::DrawSprite(Texture& texture, glm::vec2 position, glm::vec2 
     /* Last scale */
     model = glm::scale(model, glm::vec3(size, 1.0f));
 
-    m_shader.SetUniformMat4f("u_Model", model);
+    m_Shader.SetUniformMat4f("u_Model", model);
 
     /* Render textured quad */
-    m_shader.SetUniform3f("u_SpriteColor", color);
+    m_Shader.SetUniform3f("u_SpriteColor", color);
 
     //GLCall(glActiveTexture(GL_TEXTURE0)); // Setting texture slot 0
     texture.Bind();
@@ -55,7 +55,7 @@ void SpriteRenderer::initRenderData()
         1.0f, 0.0f, 1.0f, 0.0f,
         0.0f, 0.0f, 0.0f, 0.0f,
 
-        0.0f, 1.0f, 1.0f, 1.0f,
+        0.0f, 1.0f, 0.0f, 1.0f,
         1.0f, 1.0f, 1.0f, 1.0f,
         1.0f, 0.0f, 1.0f, 0.0f
     };
